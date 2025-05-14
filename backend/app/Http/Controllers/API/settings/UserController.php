@@ -18,6 +18,8 @@ class UserController extends BaseController
         $users = User::all();
         return $this->sendResponse($users);
     }
+
+
     /**
      * Register api
      *
@@ -44,23 +46,4 @@ class UserController extends BaseController
    
         return $this->sendResponse($success, 'User register successfully.');
     }
-   
-    /**
-     * Login api
-     *
-     * @return \Illuminate\Http\Response
-     */
-    // public function login(Request $request): JsonResponse
-    // {
-    //     if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){ 
-    //         $user = Auth::user(); 
-    //         $success['token'] =  $user->createToken('MyApp')->plainTextToken; 
-    //         $success['name'] =  $user->name;
-   
-    //         return $this->sendResponse($success, 'User login successfully.');
-    //     } 
-    //     else{ 
-    //         return $this->sendError('Unauthorised.', ['error'=>'Unauthorised']);
-    //     } 
-    // }
 }

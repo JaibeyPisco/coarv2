@@ -15,9 +15,11 @@ Route::post('app/initial', [AppController::class, 'initial'])->middleware('auth:
 
 Route::controller(AuthController::class)->group(function(){
    Route::post('register', 'register')->name('register');
-    Route::post('login', 'login')->name('login');
+   Route::post('login', 'login')->name('login');
 });
-
+  Route::post('logout', [AuthController::class, 'logout'])
+  ->middleware('auth:sanctum')
+  ->name('logout');
 
 Route::controller(UserController::class)->group(function(){
    Route::get('settings/users', 'index')->name('users');
