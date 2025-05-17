@@ -11,7 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        Schema::table('roles', function (Blueprint $table) {
+            $table->string('fl_no_view_dashboard')->after('name')->nullable();
+        });
     }
 
     /**
@@ -19,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::table('roles', function (Blueprint $table) {
+            //
+        });
     }
 };

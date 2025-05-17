@@ -1,7 +1,8 @@
 <?php
    
 namespace App\Http\Controllers\API\settings;
-   
+
+use App\Helpers\PermissionHelper;
 use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\User;
@@ -27,6 +28,10 @@ class UserController extends BaseController
      */
     public function register(Request $request): JsonResponse
     {
+
+        PermissionHelper::authorize('user.new', 'Usuario');
+
+
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required|email',
