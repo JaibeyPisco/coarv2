@@ -8,27 +8,6 @@ Welcome to the user guide for **COAR V2**. This manual will help you understand 
 
 ## 🔐 1. Getting Started
 
-### 1.1 Register
-To register a new user go the the register side and complete all data required
-
-**Endpoint** `POST /api/register`  
-**Required**
-- `name:string` 
-- `email:string|unique`
-- `password:string`
-- `c_password:string`
-
-**Response**
-```json
-{
-    "success": true,
-    "data": {
-        "token": "9|1ys2AdY2SirXkbicHWZq6xG0rE6wUhfkAs7WEa6a2061576c",
-        "name": "pisco"
-    },
-    "message": "User register successfully."
-}
-```
 
 ### 1.2. Login
 To access the system, go to the login page and enter your email and password.

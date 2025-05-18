@@ -1,5 +1,5 @@
 <?php
-   
+
 namespace App\Http\Controllers\API\settings;
 
 use App\Http\Controllers\API\BaseController;
@@ -19,8 +19,9 @@ class RoleController extends BaseController
 
         // Crear el rol con un atributo extra 'modulo' (si lo manejas como campo en la tabla roles)
         $role = Role::create([
-            'name' => $request->name,
+            'name' => $this->limpiarnombre($request->name),
             'fl_no_view_dashboard' => $request->fl_no_view_dashboard, // Asegúrate de tener esta columna en tu tabla roles
+            'display_name' =>  $request->name,
             'guard_name' => 'api',
         ]);
 
@@ -49,5 +50,20 @@ class RoleController extends BaseController
         $role->syncPermissions($permisos_finales);
 
         return $this->sendResponse($permisos_finales, 'Rol creado correctamente');
+    }
+
+    public function limpiarnombre(String $nombre){
+
+        // Convierte a minúsculas
+        $nombre = strtolower($nombre);
+
+        // Reemplaza espacios por guiones bajos
+        $nombre = str_replace(' ', '_', $nombre);
+
+        // Elimina caracteres especiales (solo letras, números y guiones bajos)
+        $nombre = preg_replace('/[^a-z0-9_]/', '', $nombre);
+
+        return $nombre;
+
     }
 }
