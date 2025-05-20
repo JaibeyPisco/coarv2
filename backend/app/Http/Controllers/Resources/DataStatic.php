@@ -12,19 +12,20 @@ class DataStatic extends BaseController
 {
     public function ubigeo(Request $request)
     {
-        $buscar = $request->query('buscar');
+        $request->validate([
+            'search' => 'required|string',
+        ]);
 
-        //TODO: HACER QUE FUNCIONE EL FILTRO.
+        $search = $request->search;
 
-
-        $resultados = Static_ubigeo::selectRaw("id_ubigeo, CONCAT(id_ubigeo, ' - ', departamento, ' - ', provincia, ' - ', distrito) as text")
-            ->where('id_ubigeo', 'like', "%{$buscar}%")
-            ->orWhere('departamento', 'like', "%{$buscar}%")
-            ->orWhere('provincia', 'like', "%{$buscar}%")
-            ->orWhere('distrito', 'like', "%{$buscar}%")
+        $results = Static_ubigeo::selectRaw("id_ubigeo, CONCAT(id_ubigeo, ' - ', departamento, ' - ', provincia, ' - ', distrito) as text")
+            ->where('id_ubigeo', 'like', "%{$search}%")
+            ->orWhere('departamento', 'like', "%{$search}%")
+            ->orWhere('provincia', 'like', "%{$search}%")
+            ->orWhere('distrito', 'like', "%{$search}%")
             ->get();
 
-       // return $this->sendResponse($resultados);
+       return $this->sendResponse($results);
     }
 
 }

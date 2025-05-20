@@ -1,6 +1,6 @@
-<mxfile host="drawio-plugin" modified="2025-05-18T00:20:38.021Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36" version="22.1.22" etag="_ghJsjVu3b1AFrJt8dP-" type="embed">
+<mxfile host="drawio-plugin" modified="2025-05-18T15:00:57.698Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36" etag="Zd-omf0m9k2txfdU6-Ui" version="22.1.22" type="embed">
   <diagram name="Página-1" id="ycDpd4-9lRl3-AXhaBF0">
-    <mxGraphModel dx="2317" dy="1612" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="2305" dy="1542" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -20,7 +20,7 @@
           <mxGeometry x="104" y="3284" width="226" height="201" as="geometry" />
         </mxCell>
         <mxCell id="freNb7nJAfnXLiOJChIJ-7" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;colegio&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt; razon_social: varchar(500)&lt;br&gt; nombre_comercial: varchar(500)&lt;br&gt; numero_documento: varchar(11)&lt;br&gt; direccion: varchar(300)&lt;br&gt; telefono: varchar(20)&lt;br&gt; email: varchar(100)&lt;br&gt; logo: varchar(500)&lt;br&gt; id_membresia: int&lt;br&gt; id_ubigeo: varchar(6)&lt;br&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt; id: int&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=14;fontFamily=Helvetica;html=1;rounded=0;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;" parent="1" vertex="1">
-          <mxGeometry x="820" y="100" width="275" height="283" as="geometry" />
+          <mxGeometry x="-1470" y="13" width="275" height="283" as="geometry" />
         </mxCell>
         <mxCell id="freNb7nJAfnXLiOJChIJ-8" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;estado_monitoreo&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt; nombre: varchar(100)&lt;br/&gt; id_empresa: int&lt;br/&gt; tipo: varchar(45)&lt;br/&gt; color_bg: varchar(45)&lt;br/&gt; color_text: varchar(45)&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt; id: int&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=14;fontFamily=Helvetica;html=1;rounded=0;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;" parent="1" vertex="1">
           <mxGeometry x="-534" y="496" width="189" height="178" as="geometry" />
@@ -41,7 +41,7 @@
           <mxGeometry x="341" y="2049" width="233" height="431" as="geometry" />
         </mxCell>
         <mxCell id="freNb7nJAfnXLiOJChIJ-14" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;lugar&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt; nombre: varchar(100)&lt;br/&gt; id_empresa: int&lt;br/&gt; referencia: varchar(100)&lt;br/&gt; estado: tinyint&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt; id: int&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=14;fontFamily=Helvetica;html=1;rounded=0;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;" parent="1" vertex="1">
-          <mxGeometry x="-827" y="451" width="178" height="155" as="geometry" />
+          <mxGeometry x="-836" y="630" width="178" height="155" as="geometry" />
         </mxCell>
         <mxCell id="freNb7nJAfnXLiOJChIJ-15" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;membresia&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt; nombre: varchar(300)&lt;br/&gt; token_integracion: varchar(500)&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt; id: int&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=14;fontFamily=Helvetica;html=1;rounded=0;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;" parent="1" vertex="1">
           <mxGeometry x="-539" y="30" width="228" height="118" as="geometry" />
