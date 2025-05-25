@@ -62,7 +62,7 @@ class CompanyController extends BaseController
     public function edit(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'id'       => 'required|exists:company,id',
+            'id'       => 'required|exists:empresa,id',
             'business_name' => 'required|string|max:255',
             'trade_name' => 'required|email',
             'document_number' => 'required|string',
