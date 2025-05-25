@@ -14,8 +14,27 @@
             "/assets/plugins/fontawesome-free/css/all.min.css",
             "/assets/plugins/icheck-bootstrap/icheck-bootstrap.min.css",
             "/assets/css/adminlte.min.css",
+
+            "/assets/css/app.css",
+
+
+            "/assets/plugins/datatables/jquery.dataTables.min.js",
+            "/assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js",
+            "/assets/plugins/datatables-responsive/js/dataTables.responsive.min.js",
+            "/assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js",
+            "/assets/plugins/datatables-buttons/js/dataTables.buttons.min.js",
+            "/assets/plugins/datatables-buttons/js/buttons.bootstrap4.min.js",
+            "/assets/plugins/jszip/jszip.min.js",
+            "/assets/plugins/pdfmake/pdfmake.min.js",
+            "/assets/plugins/pdfmake/vfs_fonts.js",
+            "/assets/plugins/datatables-buttons/js/buttons.html5.min.js",
+            "/assets/plugins/datatables-buttons/js/buttons.print.min.js",
+            "/assets/plugins/datatables-buttons/js/buttons.colVis.min.js",
+
             "/assets/plugins/bootstrap/js/bootstrap.bundle.min.js",
             "/assets/js/adminlte.min.js"
+
+
         ], function () {
 
 
@@ -39,7 +58,7 @@
     <div class="wrapper">
 
         <!-- Navbar -->
-            <Navbar/>
+        <Navbar/>
         <!-- /.navbar -->
 
         <!-- Main Sidebar Container -->
@@ -47,31 +66,7 @@
 
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
-            <!-- Content Header (Page header) -->
-            <div class="content-header">
-                <div class="container-fluid">
-                    <div class="row mb-2">
-                        <div class="col-sm-6">
-                            <h1 class="m-0">Starter Page</h1>
-                        </div><!-- /.col -->
-                        <div class="col-sm-6">
-                            <ol class="breadcrumb float-sm-right">
-                                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                <li class="breadcrumb-item active">Starter Page</li>
-                            </ol>
-                        </div><!-- /.col -->
-                    </div><!-- /.row -->
-                </div><!-- /.container-fluid -->
-            </div>
-            <!-- /.content-header -->
-
-            <!-- Main content -->
-            <div class="content">
-                <div class="container-fluid">
-                    {@render children()}
-                    <!-- /.row -->
-                </div><!-- /.container-fluid -->
-            </div>
+            {@render children()}
             <!-- /.content -->
         </div>
         <!-- /.content-wrapper -->
