@@ -19,7 +19,7 @@ Route::controller(UserController::class)->group(function(){
 
 Route::controller(AuthController::class)->group(function(){
    Route::post('login', 'login')->name('login');
-    Route::post('register', 'register')->name('register');
+  //  Route::post('register', 'register')->name('register');
 });
 
 
@@ -36,5 +36,4 @@ Route::controller(UserController::class)->group(function(){
 
 })->middleware('auth:sanctum');
 
-Route::get('data_static/ubigeo',  [\App\Http\Controllers\Resources\DataStatic::class, 'ubigeo'])->middleware('auth:sanctum');
-
+Route::get('data_static/ubigeo',  [\App\Http\Controllers\Resources\DataStatic::class, 'ubigeo'])->middleware('authentication:sanctum');

@@ -7,11 +7,12 @@ use Illuminate\Support\Facades\Auth;
 
 class AppController extends BaseController{
 
-	
+
     public function initial($response = true)
 	{
-		
+
 		$usuario = Auth::user();
+
 		// $Ajuste_avanzado_m = new Ajuste_avanzado_model();
 		// $empresa = new EmpresaModel();
 		// $static_system = new StaticSystemModel();
@@ -46,11 +47,11 @@ class AppController extends BaseController{
 				'permisos'			=> $permisos,
 				// 'all_permiso'		=> $all_permiso,
 				// 'empresa'			=> $empresa,
-			 
+
 			];
 
-			
+
             return response()->json($response, 200);
-        }	
+        }
 	}
 }

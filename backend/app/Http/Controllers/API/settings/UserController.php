@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends BaseController
 {
@@ -36,24 +37,36 @@ class UserController extends BaseController
             'name' => 'required',
             'email' => 'required|email',
             'password' => 'required',
-            'c_password' => 'required|same:password',
-            'role' => 'required|string|exists:roles,name'
+            'user_type' => 'required',
+
+          //  'c_password' => 'required|same:password',
+           'id_role' => 'required|string|exists:roles,id'
         ]);
 
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());
         }
 
+
+
         $input = $request->all();
+
+
+        $photo = $request->file('photo')->store('images', 'public');
+
+        $urlPhoto = Storage::url($photo);
+
+        $input['photo'] = $urlPhoto;
 
         $input['status'] = 'ACTIVO';
 
         $input['password'] = bcrypt($input['password']);
 
+
         $user = User::create($input);
 
 
-        $user->assignRole(Role::findByName($request->role, 'api'));
+        $user->assignRole(Role::findById($request->id_role, 'api'));
 
 
         $success['token'] =  $user->createToken('MyApp')->plainTextToken;
