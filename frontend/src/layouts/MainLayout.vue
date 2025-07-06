@@ -6,6 +6,8 @@
   import Footer from "@/layouts/Footer.vue";
   import {useAuthStore} from "@/lib/authentication/auth.js";
 
+ 
+
 
   const authStore = useAuthStore();
 

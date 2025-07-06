@@ -1,151 +1,158 @@
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue';
+import ImagePreviewComponent from '@/components/ImagePreviewComponent.vue';
+import axiosInstance from '@/lib/utils/axiosInstance.js';
+import { showMessageNotification } from '@/lib/utils/Notification';
 
-import ImagePreviewComponent from "@/components/ImagePreviewComponent.vue";
-import axiosInstance from "@/lib/utils/axiosInstance.js";
+const modalRef = ref(null);
+const imageUserSelected = ref(null);
 
-
-const state = reactive({
-  modal_open: null,
-})
-const  imageUserSelected = ref(null);
-
-let formData = ref({
+// Estado reactivo del formulario
+const form = ref({
   name: '',
   surname: '',
   email: '',
   password: '',
   id_role: '1',
   user_type: 'STANDARD'
-})
+});
 
+const state = reactive({
+  modalInstance: null,
+});
+
+// Inicia el modal cuando se monta el componente
 onMounted(() => {
-  state.modal_open = new bootstrap.Modal('#modalUsuario', {})
-})
+  state.modalInstance = new bootstrap.Modal(modalRef.value);
+});
 
+// Abre el modal
 function openModal() {
-  state.modal_open.show()
+  state.modalInstance?.show();
 }
 
+// Cierra el modal
 function closeModal() {
-  state.modal_open.hide()
+  state.modalInstance?.hide();
 }
 
+// Construye FormData para enviar
+function buildPayload() {
+  const payload = new FormData();
+  for (const [key, value] of Object.entries(form.value)) {
+    payload.append(key, value);
+  }
 
-const handleSubmit = async (e)=> {
-    e.preventDefault();
+  if (imageUserSelected.value) {
+    payload.append('photo', imageUserSelected.value);
+  }
 
-    const payload = new FormData();
-
-    payload.append('name', formData.value.name);
-    payload.append('surname', formData.value.surname);
-    payload.append('email', formData.value.email);
-    payload.append('password', formData.value.password);
-    payload.append('id_role', formData.value.id_role);
-    payload.append('user_type', formData.value.user_type);
-
-    if (imageUserSelected.value) {
-      payload.append('photo', imageUserSelected.value);
-    }
-
-    try {
-
-      const response = await  axiosInstance.post('/settings/user/register', payload, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-
-      console.log(response);
-
-    }catch (error) {
-
-      const data = error.response.data.data;
-
-      alert(JSON.stringify(data));
-
-    }
-
+  return payload;
 }
 
+// Limpia el formulario
+function resetForm() {
+  form.value = {
+    name: '',
+    surname: '',
+    email: '',
+    password: '',
+    id_role: '1',
+    user_type: 'STANDARD',
+  };
+  imageUserSelected.value = null;
+}
+
+// Maneja el submit del formulario
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const response = await axiosInstance.post(
+      '/settings/user/register',
+      buildPayload(),
+      { headers: { 'Content-Type': 'multipart/form-data' } }
+    );
+
+    showMessageNotification(response.data.message, 'success');
+    closeModal();
+    resetForm();
+  } catch (error) {
+    const responseData = error.response?.data?.data || ['Ocurrió un error inesperado'];
+    showMessageNotification(responseData, 'danger');
+  }
+};
+
+// Captura la imagen seleccionada
 const handleChangeImage = (file) => {
   imageUserSelected.value = file;
+};
 
-}
-
+// Permite que el componente padre controle el modal
 defineExpose({
   openModal,
   closeModal,
-})
+});
 </script>
 
 <template>
-  <div class="modal" tabindex="-1" id="modalUsuario">
+  <div class="modal fade" id="modalUsuario" tabindex="-1" ref="modalRef">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
-        <form @submit.prevent="handleSubmit">
+        <form @submit="handleSubmit">
           <div class="modal-header">
             <h5 class="modal-title">Nuevo usuario</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
+            <button type="button" class="btn-close" @click="closeModal" aria-label="Close"></button>
           </div>
+
           <div class="modal-body">
             <div class="row">
+              <!-- Columna Izquierda -->
               <div class="col-md-4">
-                <div class="row">
-                  <div class="col-md-12">
-                    <div class="form-group">
-                      <label>Tipo Persona</label>
-                      <select  class="form-control form-control-sm" autocomplete="off"  v-model="formData.user_type">
-                        <option value="STANDARD">USUARIO STANDARD</option>
-                        <option value="DOCENTE">DOCENTE</option>
-                        <option value="ESTUDIANTE">ESTUDIANTE</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="col-md-12" align="center">
-                     <ImagePreviewComponent @change="handleChangeImage"/>
-                  </div>
+                <div class="form-group mb-3">
+                  <label>Tipo Persona</label>
+                  <select class="form-control form-control-sm" v-model="form.user_type">
+                    <option value="STANDARD">USUARIO STANDARD</option>
+                    <option value="DOCENTE">DOCENTE</option>
+                    <option value="ESTUDIANTE">ESTUDIANTE</option>
+                  </select>
+                </div>
+                <div class="text-center">
+                  <ImagePreviewComponent @change="handleChangeImage" />
                 </div>
               </div>
+
+              <!-- Columna Derecha -->
               <div class="col-md-8">
-                <div class="row">
-                  <div class="col-md-12">
-                    <label for="">Nombres</label>
-                    <input type="text" class="form-control" v-model="formData.name" />
-                  </div>
-                  <div class="col-md-12">
-                    <label for="">Apellidos</label>
-                    <input type="text" class="form-control" v-model="formData.surname" />
-                  </div>
-                  <div class="col-md-12">
-                    <label for="">Correo electronico</label>
-                    <input type="email" class="form-control" v-model="formData.email" />
-                  </div>
-                  <div class="col-md-12">
-                    <label for="">Contraseña</label>
-                    <input type="text" class="form-control" v-model="formData.password" />
-                  </div>
-                  <div class="col-md-12">
-                    <label for="">Rol y Permiso</label>
-                    <select class="form-control" v-model="formData.id_role">
-                        <option value="1">SUPER ADMINISTRADOR</option>
-                        <option value="2">DOCENTE</option>
-                        <option value="3">ESTUDIANTE</option>
-                    </select>
-                  </div>
+                <div class="mb-2">
+                  <label>Nombres</label>
+                  <input type="text" class="form-control" v-model="form.name" />
+                </div>
+                <div class="mb-2">
+                  <label>Apellidos</label>
+                  <input type="text" class="form-control" v-model="form.surname" />
+                </div>
+                <div class="mb-2">
+                  <label>Correo electrónico</label>
+                  <input type="email" class="form-control" v-model="form.email" />
+                </div>
+                <div class="mb-2">
+                  <label>Contraseña</label>
+                  <input type="password" class="form-control" v-model="form.password" />
+                </div>
+                <div class="mb-2">
+                  <label>Rol y Permiso</label>
+                  <select class="form-control" v-model="form.id_role">
+                    <option value="1">SUPER ADMINISTRADOR</option>
+                    <option value="2">DOCENTE</option>
+                    <option value="3">ESTUDIANTE</option>
+                  </select>
                 </div>
               </div>
             </div>
           </div>
+
           <div class="modal-footer d-flex justify-content-between">
-            <button type="button" class="btn btn-close-white btn-sm" data-bs-dismiss="modal">
-              Cerrar
-            </button>
+            <button type="button" class="btn btn-secondary btn-sm" @click="closeModal">Cerrar</button>
             <button type="submit" class="btn btn-primary btn-sm">Guardar</button>
           </div>
         </form>
@@ -153,5 +160,3 @@ defineExpose({
     </div>
   </div>
 </template>
-
-<style scoped></style>

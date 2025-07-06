@@ -78,7 +78,7 @@ class UserController extends BaseController
         $success['token'] =  $user->createToken('MyApp')->plainTextToken;
         $success['name'] =  $user->name;
 
-        return $this->sendResponse($success, 'User register successfully.');
+        return $this->sendResponse($success, 'Usuario '.$input['name'] .' registrado correctamente .');
     }
 
     public function edit(Request $request): JsonResponse
