@@ -21,8 +21,6 @@
           <img src="/assets/img/system/logocoar.png" alt="" class="img-fluid mb-3" style="height: 10rem">
         </div>
         <div class="card-body login-card-body">
-
-
           <form @submit.prevent="authenticate(formData)" method="post">
             <div class="input-group mb-1">
               <div class="form-floating">

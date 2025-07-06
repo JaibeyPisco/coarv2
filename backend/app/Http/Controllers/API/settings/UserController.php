@@ -40,11 +40,17 @@ class UserController extends BaseController
             'user_type' => 'required',
 
           //  'c_password' => 'required|same:password',
-           'id_role' => 'required|string|exists:roles,id'
+           //'id_role' => 'required|string|exists:roles,id'
+        ],[
+            'name.required' => 'El campo nombre es obligatorio',
+            'email.required' => 'El campo email es obligatorio',
+            'email.email' => 'El campo email debe ser un email',
+            'password.required' => 'El campo password es obligatorio',
+            'user_type.required' => 'El campo tipo de usuario es obligatorio',
         ]);
 
         if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());
+                return $this->sendError('Validation Error.', $validator->errors()->all());
         }
 
 
@@ -66,7 +72,7 @@ class UserController extends BaseController
         $user = User::create($input);
 
 
-        $user->assignRole(Role::findById($request->id_role, 'api'));
+      //  $user->assignRole(Role::findById($request->id_role, 'api'));
 
 
         $success['token'] =  $user->createToken('MyApp')->plainTextToken;

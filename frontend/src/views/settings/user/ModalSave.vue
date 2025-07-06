@@ -58,8 +58,12 @@ const handleSubmit = async (e)=> {
 
       console.log(response);
 
-    }catch (e) {
-      console.log(e)
+    }catch (error) {
+
+      const data = error.response.data.data;
+
+      alert(JSON.stringify(data));
+
     }
 
 }
