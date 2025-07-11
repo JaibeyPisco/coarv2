@@ -45,7 +45,7 @@ let Loader = {
                     index = 0;
                     callback();
                 } else {
-                    Loader.requireFiles(files, callback);
+                     Loader.requireFiles(files, callback);
                 }
             };
         };

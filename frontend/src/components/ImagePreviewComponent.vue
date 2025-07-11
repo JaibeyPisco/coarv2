@@ -3,7 +3,12 @@ import  {ref} from "vue";
 
 
 const emit = defineEmits(['change']);
-const previewUrl = ref(null);
+
+
+const placeHolderImage =import.meta.env.VITE_URL_PLACEHOLDER_IMAGE;
+const previewUrl = ref(placeHolderImage);
+
+console.log(placeHolderImage);
 
 
 const onfileChange = (event) => {

@@ -1,12 +1,12 @@
 import axios from "axios";
 
- const API_BASE_URL = import.meta.env.VITE_BACKEND_API;
+ const API_BASE_URL = import.meta.env.VITE_URL_BACKEND;
 
  const axiosInstance = axios.create({
-     baseURL:API_BASE_URL,
-     headers: {
-         'Content-Type': "application/json"
-     }
+     baseURL:API_BASE_URL + 'api/',
+    //  headers: {
+    //      'Content-Type': "application/json"
+    //  }
  })
 
 axiosInstance.interceptors.request.use(config => {

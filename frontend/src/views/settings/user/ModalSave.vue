@@ -38,7 +38,9 @@ function closeModal() {
 
 // Construye FormData para enviar
 function buildPayload() {
+
   const payload = new FormData();
+
   for (const [key, value] of Object.entries(form.value)) {
     payload.append(key, value);
   }
@@ -74,10 +76,14 @@ const handleSubmit = async (e) => {
     );
 
     showMessageNotification(response.data.message, 'success');
+   
     closeModal();
     resetForm();
+
   } catch (error) {
+    
     const responseData = error.response?.data?.data || ['Ocurrió un error inesperado'];
+   
     showMessageNotification(responseData, 'danger');
   }
 };
@@ -152,7 +158,7 @@ defineExpose({
           </div>
 
           <div class="modal-footer d-flex justify-content-between">
-            <button type="button" class="btn btn-secondary btn-sm" @click="closeModal">Cerrar</button>
+            <button type="button" class="btn btn-light btn-sm" @click="closeModal">Cerrar</button>
             <button type="submit" class="btn btn-primary btn-sm">Guardar</button>
           </div>
         </form>

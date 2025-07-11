@@ -1,7 +1,7 @@
 import {defineStore} from "pinia";
 import api from "@/lib/utils/axiosInstance.js";
 
-const API = import.meta.env.VITE_BACKEND_API;
+const API = import.meta.env.VITE_URL_BACKEND;
 
 
 export  const useAuthStore = defineStore('authstore', {
@@ -32,7 +32,7 @@ export  const useAuthStore = defineStore('authstore', {
     },
     authenticate: async function (formData) {
 
-      const res = await fetch(`${API}/login`, {
+      const res = await fetch(`${API}api/login`, {
         method: "POST",
 
         headers: {
