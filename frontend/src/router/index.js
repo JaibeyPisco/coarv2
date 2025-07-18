@@ -24,12 +24,12 @@
           {
             path: '/configuracion/usuario',
             name: 'usuario',
-            component: () => import('../views/settings/Usuario.vue'),
+            component: () => import('../views/settings/user/Usuario.vue'),
             meta: { requiresAuth: true }
           }
         ]
       },
-      {
+      { 
         path: '/login',
         name: 'login',
         component: () => import('../views/autentication/Login.vue')

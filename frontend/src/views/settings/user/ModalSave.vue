@@ -3,101 +3,111 @@ import { onMounted, reactive, ref } from 'vue';
 import ImagePreviewComponent from '@/components/ImagePreviewComponent.vue';
 import axiosInstance from '@/lib/utils/axiosInstance.js';
 import { showMessageNotification } from '@/lib/utils/Notification';
+import { URL_BACKEND_IMAGES, URL_PLACEHOLDER_IMAGE } from '@/lib/utils/config';
 
 const modalRef = ref(null);
-const imageUserSelected = ref(null);
+const uploadedImage = ref(null);
 
-// Estado reactivo del formulario
-const form = ref({
+const DEFAULT_USER = {
+  id: null,
   name: '',
   surname: '',
   email: '',
   password: '',
   id_role: '1',
-  user_type: 'STANDARD'
-});
+  user_type: 'STANDARD',
+  photo: '',
+};
+
+const form = ref({ ...DEFAULT_USER });
 
 const state = reactive({
   modalInstance: null,
 });
 
-// Inicia el modal cuando se monta el componente
+// Inicializar modal al montar componente
 onMounted(() => {
   state.modalInstance = new bootstrap.Modal(modalRef.value);
 });
 
-// Abre el modal
-function openModal() {
-  state.modalInstance?.show();
-}
-
-// Cierra el modal
-function closeModal() {
-  state.modalInstance?.hide();
-}
-
-// Construye FormData para enviar
-function buildPayload() {
-
-  const payload = new FormData();
-
-  for (const [key, value] of Object.entries(form.value)) {
-    payload.append(key, value);
-  }
-
-  if (imageUserSelected.value) {
-    payload.append('photo', imageUserSelected.value);
-  }
-
-  return payload;
-}
-
-// Limpia el formulario
-function resetForm() {
-  form.value = {
-    name: '',
-    surname: '',
-    email: '',
-    password: '',
-    id_role: '1',
-    user_type: 'STANDARD',
-  };
-  imageUserSelected.value = null;
-}
-
-// Maneja el submit del formulario
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const response = await axiosInstance.post(
-      '/settings/user/register',
-      buildPayload(),
-      { headers: { 'Content-Type': 'multipart/form-data' } }
-    );
-
-    showMessageNotification(response.data.message, 'success');
-   
-    closeModal();
-    resetForm();
-
-  } catch (error) {
-    
-    const responseData = error.response?.data?.data || ['Ocurrió un error inesperado'];
-   
-    showMessageNotification(responseData, 'danger');
-  }
-};
-
-// Captura la imagen seleccionada
-const handleChangeImage = (file) => {
-  imageUserSelected.value = file;
-};
-
-// Permite que el componente padre controle el modal
+// Exponer funciones al padre
 defineExpose({
   openModal,
   closeModal,
 });
+
+function openModal(user = null) {
+  resetForm();
+
+  if (user) {
+    loadUserData(user);
+  }
+
+  state.modalInstance?.show();
+}
+
+function closeModal() {
+  state.modalInstance?.hide();
+}
+
+function loadUserData(user) {
+  form.value = {
+    id: user.id ?? null,
+    name: user.name ?? '',
+    surname: user.surname ?? '',
+    email: user.email ?? '',
+    password: '',
+    id_role: user.id_role ?? '1',
+    user_type: user.user_type ?? 'STANDARD',
+    photo: user.photo ?? '',
+  };
+
+  uploadedImage.value = null;
+}
+
+function resetForm() {
+  form.value = { ...DEFAULT_USER };
+  uploadedImage.value = null;
+}
+
+function handleImageChange(file) {
+  uploadedImage.value = file instanceof File ? file : null;
+}
+
+function buildFormData() {
+  const data = new FormData();
+
+  Object.entries(form.value).forEach(([key, value]) => {
+    if (key !== 'photo') data.append(key, value);
+  });
+
+  if (uploadedImage.value instanceof File) {
+    data.append('photo', uploadedImage.value);
+  }
+
+  return data;
+}
+
+async function handleSubmit(event) {
+  event.preventDefault();
+
+  try {
+    const payload = buildFormData();
+
+    const response = await axiosInstance.post(
+      '/settings/user/register',
+      payload,
+      { headers: { 'Content-Type': 'multipart/form-data' } }
+    );
+
+    showMessageNotification(response.data.message, 'success');
+    closeModal();
+    resetForm();
+  } catch (error) {
+    const messages = error.response?.data?.data || ['Ocurrió un error inesperado'];
+    showMessageNotification(messages, 'danger');
+  }
+}
 </script>
 
 <template>
@@ -123,7 +133,10 @@ defineExpose({
                   </select>
                 </div>
                 <div class="text-center">
-                  <ImagePreviewComponent @change="handleChangeImage" />
+                  <ImagePreviewComponent
+                    :image="(form.value?.id != null ? URL_BACKEND_IMAGES + form.value.photo : URL_PLACEHOLDER_IMAGE)"
+                    @change="handleImageChange"
+                  />
                 </div>
               </div>
 
@@ -143,7 +156,12 @@ defineExpose({
                 </div>
                 <div class="mb-2">
                   <label>Contraseña</label>
-                  <input type="password" class="form-control" v-model="form.password" />
+                  <input
+                    type="password"
+                    class="form-control"
+                    v-model="form.password"
+                    :disabled="form.id !== null"
+                  />
                 </div>
                 <div class="mb-2">
                   <label>Rol y Permiso</label>

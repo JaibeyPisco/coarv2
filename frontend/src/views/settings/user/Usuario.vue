@@ -25,6 +25,10 @@
       modalRef.value?.openModal();
   }
 
+  const editarUsuario = (usuario) => {
+    modalRef.value?.openModal(usuario);
+  }
+
 </script>
 
 <template>
@@ -64,16 +68,20 @@
                 <td>PERSONAL</td>
                 <td>DOCENTE</td>
                 <td>
-                  <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"  ref="dropdownBtn">
-                      Dropdown button
+                   <!-- Example split danger button -->
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-light btn-sm" @click="editarUsuario(user)">Editar</button>
+                    <button type="button" class="btn btn-light btn-sm dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                      <span class="visually-hidden">Toggle Dropdown</span>
                     </button>
                     <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="#">Action</a></li>
-                      <li><a class="dropdown-item" href="#">Another action</a></li>
-                      <li><a class="dropdown-item" href="#">Something else here</a></li>
+                      <li><a class="dropdown-item" href="#">Suspender</a></li>
+                      
+                      <li><hr class="dropdown-divider"></li>
+                      <li><a class="dropdown-item" href="#">Separated link</a></li>
                     </ul>
                   </div>
+
                 </td>
               </tr>
 

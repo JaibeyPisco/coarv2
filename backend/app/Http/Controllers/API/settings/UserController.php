@@ -58,11 +58,15 @@ class UserController extends BaseController
         $input = $request->all();
 
 
-        $photo = $request->file('photo')->store('images', 'public');
+        if ($request->hasFile('photo')) {
+            $photo = $request->file('photo')->store('images', 'public');
+            $urlPhoto = Storage::url($photo);
+            $input['photo'] = $urlPhoto;
+        }
 
-        $urlPhoto = Storage::url($photo);
+            // $urlPhoto = Storage::url($photo);
 
-        $input['photo'] = $urlPhoto;
+            // $input['photo'] = $urlPhoto;
 
         $input['status'] = 'ACTIVO';
 

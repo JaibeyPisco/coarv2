@@ -10,11 +10,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('app/initial', [AppController::class, 'initial'])->middleware('auth:sanctum');
 
-Route::post('settings/store', [RoleController::class, 'store'])->middleware('auth:sanctum');
+// Route::post('settings/store', [RoleController::class, 'store'])->middleware('auth:sanctum');
 
-Route::controller(UserController::class)->group(function(){
-  Route::post('settings/user/register', 'register')->name('register');
-})->middleware('auth:sanctum');
+// Route::controller(UserController::class)->group(function(){
+//   Route::post('settings/user/register', 'register')->name('register');
+// })->middleware('auth:sanctum');
 
 
 Route::controller(AuthController::class)->group(function(){
@@ -30,6 +30,7 @@ Route::post('logout', [AuthController::class, 'logout'])
 Route::controller(UserController::class)->group(function(){
 
     Route::get('settings/users', 'index')->name('users');
+    Route::post('settings/user/register', 'register')->name('register');
     Route::post('settings/user/edit', 'edit')->name('edit');
     Route::post('/settings/user/changeStatus/{id_user}', 'changeStatus')->name('changeStatus');
     Route::post ('settings/user/uniqueUser/{id_user}', 'uniqueUser')->name('uniqueUser');

@@ -1,15 +1,20 @@
 <script setup>
+import { URL_PLACEHOLDER_IMAGE } from "@/lib/utils/config";
 import  {ref} from "vue";
 
 
 const emit = defineEmits(['change']);
 
 
-const placeHolderImage =import.meta.env.VITE_URL_PLACEHOLDER_IMAGE;
-const previewUrl = ref(placeHolderImage);
+const props = defineProps({
+  image: {
+    type: String,
+    default: URL_PLACEHOLDER_IMAGE
+  }
+});
 
-console.log(placeHolderImage);
-
+const previewUrl = ref(props.image);
+ 
 
 const onfileChange = (event) => {
 

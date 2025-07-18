@@ -1,4 +1,6 @@
 <script setup>
+import MenuItem from '@/components/utils/MenuItem.vue';
+
 
 </script>
 
@@ -41,12 +43,8 @@
               </p>
             </a>
             <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <router-link to="configuracion/usuario" class="nav-link active">
-                  <i class="nav-icon bi bi-circle"></i>
-                  <p>Usuario</p>
-                </router-link>
-              </li>
+                  <MenuItem to="/configuracion/usuario" icon="bi bi-cicle" label="Usuario" />
+                  <MenuItem to="/configuracion/rol_permiso" icon="bi bi-cicle" label="Roles y permisos" />
             </ul>
           </li>
           <li class="nav-item">
