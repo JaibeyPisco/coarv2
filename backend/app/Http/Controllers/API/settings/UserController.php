@@ -36,7 +36,7 @@ class UserController extends BaseController
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required|email',
-            'password' => 'required',
+            'password' =>  $request->id ? 'nullable' : 'required',
             'user_type' => 'required',
 
           //  'c_password' => 'required|same:password',
@@ -73,7 +73,12 @@ class UserController extends BaseController
         $input['password'] = bcrypt($input['password']);
 
 
-        $user = User::create($input);
+        if ($request->id) {
+            $user = User::find($request->id);
+             $user->update($input);
+        } else {
+            $user = User::inser($input);
+        }
 
 
       //  $user->assignRole(Role::findById($request->id_role, 'api'));

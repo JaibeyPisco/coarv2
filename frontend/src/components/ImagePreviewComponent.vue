@@ -1,6 +1,6 @@
 <script setup>
-import { URL_PLACEHOLDER_IMAGE } from "@/lib/utils/config";
-import  {ref} from "vue";
+import  { ref, watch } from "vue";
+import { URL_BACKEND_IMAGES, URL_PLACEHOLDER_IMAGE } from '@/lib/utils/config';
 
 
 const emit = defineEmits(['change']);
@@ -13,7 +13,7 @@ const props = defineProps({
   }
 });
 
-const previewUrl = ref(props.image);
+const previewUrl = ref(URL_PLACEHOLDER_IMAGE);
  
 
 const onfileChange = (event) => {
@@ -32,11 +32,20 @@ const onfileChange = (event) => {
   reader.readAsDataURL(file);
 }
 
+watch(() => props.image, (valueImage) => {
+  if (valueImage) {
+    previewUrl.value = ''
+  } else {
+      previewUrl.value = URL_PLACEHOLDER_IMAGE
+  }
+})
+
 </script>
 
 <template>
   <div class="mt-3">
-    <img v-if="previewUrl" :src="previewUrl" alt="Vista previa" class="img-preview" style="max-width:100%;" />
+    {{ previewUrl }}
+    <img  v-if="previewUrl || props.image" :src="previewUrl || URL_BACKEND_IMAGES+'/'+props.image" alt="Vista previa" class="img-preview" style="max-width:100%;" />
   </div>
   <div>
     <label class="btn btn-light w-100">

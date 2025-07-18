@@ -3,10 +3,11 @@ import { onMounted, reactive, ref } from 'vue';
 import ImagePreviewComponent from '@/components/ImagePreviewComponent.vue';
 import axiosInstance from '@/lib/utils/axiosInstance.js';
 import { showMessageNotification } from '@/lib/utils/Notification';
-import { URL_BACKEND_IMAGES, URL_PLACEHOLDER_IMAGE } from '@/lib/utils/config';
 
 const modalRef = ref(null);
 const uploadedImage = ref(null);
+
+const emits = defineEmits(['saved'])
 
 const DEFAULT_USER = {
   id: null,
@@ -103,6 +104,8 @@ async function handleSubmit(event) {
     showMessageNotification(response.data.message, 'success');
     closeModal();
     resetForm();
+    emits('saved')
+
   } catch (error) {
     const messages = error.response?.data?.data || ['Ocurrió un error inesperado'];
     showMessageNotification(messages, 'danger');
@@ -134,7 +137,7 @@ async function handleSubmit(event) {
                 </div>
                 <div class="text-center">
                   <ImagePreviewComponent
-                    :image="(form.value?.id != null ? URL_BACKEND_IMAGES + form.value.photo : URL_PLACEHOLDER_IMAGE)"
+                    :image="form.photo ?? ''"
                     @change="handleImageChange"
                   />
                 </div>

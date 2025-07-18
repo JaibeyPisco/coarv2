@@ -1,21 +1,14 @@
 <script setup>
-  import axiosInstance from "@/lib/utils/axiosInstance.js";
-  import {onMounted, ref} from "vue";
+  import { ref} from "vue";
   import Breadcumbs from "@/components/Breadcumbs.vue";
   import ModalSave from "@/views/settings/user/ModalSave.vue";
+import { useUser } from '@/composables/useUser.js'
 
-  let users = ref(null);
+  
+  const {  getUsers, users, loading } = useUser()
 
-  onMounted( async ()=>{
+  getUsers()
 
-    const {data} = await axiosInstance.get('settings/users')
-
-    if(data.success){
-      users.value = data.data;
-    }
-
-
-  })
 
  const buttons = [
      {label: 'Nuevo', class:"btn-primary", action:'new'}
@@ -29,11 +22,21 @@
     modalRef.value?.openModal(usuario);
   }
 
+  const handleSaved = () =>{
+    getUsers()
+  }
+
 </script>
 
 <template>
 
-  <ModalSave ref="modalRef"/>
+  <div v-if="loading">
+      LOADING .....
+  </div>
+
+  <ModalSave ref="modalRef"
+    @saved="handleSaved"
+  />
   <Breadcumbs :buttons="buttons" :module="['Configuración', 'Usuario']"  @button-click="handleClick"></Breadcumbs>
 
   <!--end::App Content Header-->
