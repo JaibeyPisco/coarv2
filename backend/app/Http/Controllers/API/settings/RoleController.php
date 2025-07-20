@@ -3,26 +3,26 @@
 namespace App\Http\Controllers\API\settings;
 
 use App\Http\Controllers\API\BaseController;
+use App\Models\Role;
+use App\Models\Role_permission;
 use Illuminate\Http\Request;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 
 class RoleController extends BaseController
 {
-    public function store(Request $request)
+    public function save(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|unique:roles,name',
+            'name' => 'required|string|unique:role,name',
             'fl_no_view_dashboard' => 'string|nullable',
             'permissions' => 'required|array',
+        ], [
+            'name.unique'=> 'El rol debe ser unico'
         ]);
 
         // Crear el rol con un atributo extra 'modulo' (si lo manejas como campo en la tabla roles)
         $role = Role::create([
-            'name' => $this->limpiarnombre($request->name),
+            'name' => $request->name,
             'fl_no_view_dashboard' => $request->fl_no_view_dashboard, // Asegúrate de tener esta columna en tu tabla roles
-            'display_name' =>  $request->name,
-            'guard_name' => 'api',
         ]);
 
         // Procesar permisos
@@ -37,9 +37,9 @@ class RoleController extends BaseController
                     $permiso_nombre = "$menu.$accion";
 
                     // Crear el permiso si no existe
-                    Permission::firstOrCreate([
+                    Role_permission::firstOrCreate([
                         'name' => $permiso_nombre,
-                        'guard_name' => 'api',
+                       
                     ]);
 
                     $permisos_finales[] = $permiso_nombre;
@@ -47,7 +47,7 @@ class RoleController extends BaseController
             }
         }
 
-        $role->syncPermissions($permisos_finales);
+      
 
         return $this->sendResponse($permisos_finales, 'Rol creado correctamente');
     }

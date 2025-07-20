@@ -3,8 +3,9 @@
 <script setup>
   import { ref} from "vue";
   import Breadcumbs from "@/components/Breadcumbs.vue";
-  import ModalSave from "@/views/settings/user/ModalSave.vue";
+  
 import { useUser } from '@/composables/useUser.js'
+import ModalSave from "./ModalSave.vue";
 
   
   const {  getUsers, users, loading } = useUser()
@@ -40,7 +41,7 @@ import { useUser } from '@/composables/useUser.js'
   <ModalSave ref="modalRef"
     @saved="handleSaved"
   />
-  <Breadcumbs :buttons="buttons" :module="['Configuración', 'Usuario']"  @button-click="handleClick"></Breadcumbs>
+  <Breadcumbs :buttons="buttons" :module="['Configuración', 'Rol y permisos']"  @button-click="handleClick"></Breadcumbs>
 
   <!--end::App Content Header-->
   <!--begin::App Content-->
@@ -56,23 +57,13 @@ import { useUser } from '@/composables/useUser.js'
           <table class="table table-sm">
             <thead>
             <tr>
+              <th>ACCION</th>
               <th>NOMBRES</th>
-              <th>APELLIDOS</th>
-              <th >EMAIL</th>
-              <th >TIPO PERSONA</th>
-              <th >ROL Y PERMISO</th>
-              <th >ACCIONES</th>
+              
             </tr>
             </thead>
             <tbody>
-
               <tr v-for="user in users" :key="users.id" class="align-middle">
-                <td>{{user.name}}</td>
-               <td> {{user.surname}}</td>
-
-                <td>{{user.email}}</td>
-                <td>PERSONAL</td>
-                <td>DOCENTE</td>
                 <td>
                    <!-- Example split danger button -->
                   <div class="btn-group">
@@ -87,8 +78,8 @@ import { useUser } from '@/composables/useUser.js'
                       <li><a class="dropdown-item" href="#">Separated link</a></li>
                     </ul>
                   </div>
-
                 </td>
+                <td>DOCENTE</td>
               </tr>
 
 
