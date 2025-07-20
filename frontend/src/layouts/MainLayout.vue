@@ -16,6 +16,7 @@ onMounted(() => {
   authStore.getInitialData();
 
   LoaderStatic.requireFiles([
+    '/css/adminlte.css',
      '/js/adminlte.min.js'
   ],async function () 
   {

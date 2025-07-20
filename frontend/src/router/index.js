@@ -15,15 +15,15 @@
             meta: { requiresAuth: true }
           },
           {
-            path: 'about',
-            name: 'about',
-            component: () => import('../views/AboutView.vue'),
-            meta: { requiresAuth: true }
-          },
-          {
             path: '/configuracion/usuario',
             name: 'usuario',
             component: () => import('../views/settings/user/Usuario.vue'),
+            meta: { requiresAuth: true }
+          },
+          {
+            path: '/configuracion/rol_permiso',
+            name: 'rol_permiso',
+            component: () => import('../views/settings/rol/index.vue'),
             meta: { requiresAuth: true }
           }
         ]
@@ -37,7 +37,9 @@
   })
 
   router.beforeEach(async (to, from, next) => {
+    
     const authStore = useAuthStore();
+
 
     if (!authStore.initialData) {
       await authStore.getInitialData();
