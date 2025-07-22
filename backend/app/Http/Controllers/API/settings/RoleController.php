@@ -6,51 +6,73 @@ use App\Http\Controllers\API\BaseController;
 use App\Models\Role;
 use App\Models\Role_permission;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use mysql_xdevapi\Exception;
 
 class RoleController extends BaseController
 {
     public function save(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|unique:role,name',
-            'fl_no_view_dashboard' => 'string|nullable',
-            'permissions' => 'required|array',
-        ], [
-            'name.unique'=> 'El rol debe ser unico'
+            'rol' => 'required|string',
+            'fl_no_dashboard' => 'nullable',
+            'permisos' => 'required|json',
         ]);
 
-        // Crear el rol con un atributo extra 'modulo' (si lo manejas como campo en la tabla roles)
-        $role = Role::create([
-            'name' => $request->name,
-            'fl_no_view_dashboard' => $request->fl_no_view_dashboard, // Asegúrate de tener esta columna en tu tabla roles
-        ]);
+        try {
+            DB::beginTransaction();
 
-        // Procesar permisos
-        $permisos_finales = [];
+            $data = [
+                'name' => $request->rol,
+                'fl_no_view_dashboard' => $request->boolean('fl_no_dashboard', false),
+            ];
 
-        foreach ($request->permissions as $permiso) {
-            $menu = $permiso['menu'];
-            if (! $menu) continue;
-
-            foreach (['view', 'create', 'edit', 'delete'] as $accion) {
-                if (!empty($permiso[$accion])) {
-                    $permiso_nombre = "$menu.$accion";
-
-                    // Crear el permiso si no existe
-                    Role_permission::firstOrCreate([
-                        'name' => $permiso_nombre,
-                       
-                    ]);
-
-                    $permisos_finales[] = $permiso_nombre;
-                }
+            // Si viene con ID, es edición
+            if ($request->filled('id')) {
+                $role = Role::findOrFail($request->id);
+                $role->update($data);
+            } else {
+                $role = Role::create($data);
             }
+
+            // Eliminar permisos previos
+            Role_permission::where('id_role', $role->id)->delete();
+
+            $permisos = json_decode($request->permisos);
+
+
+            $data_insert = [];
+
+            foreach ($permisos as $row) {
+//                if ($row->view || $row->new || $row->edit || $row->delete) {
+                    $data_insert[] = [
+                        'id_role' => $role->id,
+                        'menu' => $row->menu,
+                        'view' => !empty($row->view) ? 1 : 0,
+                        'create' => !empty($row->new) ? 1 : 0,
+                        'edit' => !empty($row->edit) ? 1 : 0,
+                        'delete' => !empty($row->delete) ? 1 : 0,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+//                }
+            }
+
+            if (!empty($data_insert)) {
+                Role_permission::insert($data_insert);
+            }
+
+            // Centinela o auditoría (puedes implementar tu propio servicio)
+            // AuditLog::create([...]);
+
+            DB::commit();
+            return response()->json(['tipo' => 'success', 'mensaje' => 'Rol guardado correctamente']);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json(['tipo' => 'danger', 'mensaje' => $th->getMessage()], 400);
         }
-
-      
-
-        return $this->sendResponse($permisos_finales, 'Rol creado correctamente');
     }
+
 
     public function limpiarnombre(String $nombre){
 

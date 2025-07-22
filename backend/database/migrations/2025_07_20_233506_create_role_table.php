@@ -23,7 +23,6 @@ return new class extends Migration
         Schema::create('role_permission', function (Blueprint $table) {
             $table->id();
             $table->foreignId('id_role')->constrained('role')->onDelete('cascade');
-            
             $table->string('view');
             $table->string('create');
             $table->string('edit');

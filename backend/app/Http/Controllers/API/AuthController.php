@@ -18,40 +18,40 @@ class AuthController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function register(Request $request): JsonResponse
-    {
+    // public function register(Request $request): JsonResponse
+    // {
 
-        // PermissionHelper::authorize('user.create', 'Usuario');
+    //     // PermissionHelper::authorize('user.create', 'Usuario');
 
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'email' => 'required|email',
-            'password' => 'required',
-            'c_password' => 'required|same:password',
-            'role' => 'required|string|exists:roles,name'
-        ]);
+    //     $validator = Validator::make($request->all(), [
+    //         'name' => 'required',
+    //         'email' => 'required|email',
+    //         'password' => 'required',
+    //         'c_password' => 'required|same:password',
+    //         'role' => 'required|string|exists:roles,name'
+    //     ]);
 
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());
-        }
+    //     if($validator->fails()){
+    //         return $this->sendError('Validation Error.', $validator->errors());
+    //     }
 
-        $input = $request->all();
+    //     $input = $request->all();
 
-        $input['status'] = 'ACTIVO';
+    //     $input['status'] = 'ACTIVO';
 
-        $input['password'] = bcrypt($input['password']);
+    //     $input['password'] = bcrypt($input['password']);
 
-        $user = User::create($input);
-
-
-        $user->assignRole(Role::findByName($request->role, 'api'));
+    //     $user = User::create($input);
 
 
-        $success['token'] =  $user->createToken('MyApp')->plainTextToken;
-        $success['name'] =  $user->name;
+    //     $user->assignRole(Role::findByName($request->role, 'api'));
 
-        return $this->sendResponse($success, 'User register successfully.');
-    }
+
+    //     $success['token'] =  $user->createToken('MyApp')->plainTextToken;
+    //     $success['name'] =  $user->name;
+
+    //     return $this->sendResponse($success, 'User register successfully.');
+    // }
 
     /**
      * Login api
@@ -60,15 +60,21 @@ class AuthController extends BaseController
      */
     public function login(Request $request): JsonResponse
     {
+
+       
         $isAuthed  = Auth::attempt(
             [
-                'email' => $request->email,
-                'password' => $request->password
+                'email' =>'jpisco@coarms.com',
+                'password' => 'password'
             ]);
+        // $isAuthed  = Auth::attempt(
+        //     [
+        //         'email' => $request->email,
+        //         'password' => $request->password
+        //     ]);
 
 
-
-
+ 
         if($isAuthed){
 
             $user = Auth::user();
