@@ -1,15 +1,20 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import PermisoRow from './PermisoRow.vue'
+import { Usesave } from '@/composables/settings/rol/UseSave'
+ 
 
 const modalRef = ref(null)
 const state = reactive({ modalInstance: null })
+const {save, loading, response} = Usesave();
+
+const emits = defineEmits(['saved']);
 
 const rolData = ref({
   nombre: '',
-  
+
   fl_no_dashboard: false,
-  
+
 })
 
 const permisosSeleccionados = reactive({})
@@ -48,20 +53,22 @@ const allSecciones = Object.values(secciones).flat()
 function toggleAll(tipo, checked) {
 
   allSecciones.forEach(({ menu, items }) => {
-  
+
     if (!permisosSeleccionados[menu]) permisosSeleccionados[menu] = {}
-  
+
     if (items.includes(tipo)) {
-  
+
       permisosSeleccionados[menu][tipo] = checked
     }
   })
 }
 
 function handleSubmit() {
-  
+
   const data = new FormData();
-  const permisos = []
+
+  const permisos = [];
+ 
 
   Object.entries(permisosSeleccionados).forEach(([menu, permiso]) => {
     if (permiso.view || permiso.new || permiso.edit || permiso.delete) {
@@ -74,17 +81,20 @@ function handleSubmit() {
     return
   }
 
-  console.log(permisos);
-
   data.append('rol', rolData.value.nombre)
   data.append('fl_no_dashboard', rolData.value.fl_no_dashboard)
   data.append('permisos', JSON.stringify(permisos))
-
-  alert('testing si funciona')
-  console.log(data);
-  
-  
  
+    save(data);
+
+    if(response.value.tipo = 'success'){
+      closeModal();
+      emits('saved')
+    }
+ 
+  
+
+  
 }
 
 function openModal() {
@@ -114,7 +124,7 @@ onMounted(() => {
             <div class="row">
               <div class="col-md-8">
                 <label class="form-label">Nombre</label>
-                <input type="text" class="form-control form-control-sm"  v-model="rolData.nombre"/>
+                <input type="text" class="form-control form-control-sm" v-model="rolData.nombre" />
               </div>
               <div class="col-md-4 d-flex align-items-end">
                 <label class="form-label w-100">
@@ -136,48 +146,46 @@ onMounted(() => {
                   <tbody>
                     <tr>
                       <td class="font-weight-bold"></td>
-                      <td class="text-center"><input type="checkbox" @change="e => toggleAll('view', e.target.checked)" /></td>
-                      <td class="text-center"><input type="checkbox" @change="e => toggleAll('new', e.target.checked)" /></td>
-                      <td class="text-center"><input type="checkbox" @change="e => toggleAll('edit', e.target.checked)" /></td>
-                      <td class="text-center"><input type="checkbox" @change="e => toggleAll('delete', e.target.checked)" /></td>
+                      <td class="text-center"><input type="checkbox"
+                          @change="e => toggleAll('view', e.target.checked)" /></td>
+                      <td class="text-center"><input type="checkbox"
+                          @change="e => toggleAll('new', e.target.checked)" /></td>
+                      <td class="text-center"><input type="checkbox"
+                          @change="e => toggleAll('edit', e.target.checked)" /></td>
+                      <td class="text-center"><input type="checkbox"
+                          @change="e => toggleAll('delete', e.target.checked)" /></td>
                     </tr>
 
-                    <tr><td class="font-weight-bold color-rol" colspan="5"><strong>DASHBOARD</strong></td></tr>
-                    <PermisoRow
-                      v-for="p in secciones.dashboard"
-                      :key="p.menu"
-                      v-bind="p"
-                      :modelValue="permisosSeleccionados[p.menu] || {}"
-                      @update:modelValue="val => permisosSeleccionados[p.menu] = val"
-                    />
+                    <tr>
+                      <td class="font-weight-bold color-rol" colspan="5"><strong>DASHBOARD</strong></td>
+                    </tr>
 
-                    <tr><td class="font-weight-bold color-rol" colspan="5"><strong>CONFIGURACIÓN</strong></td></tr>
-                    <PermisoRow
-                      v-for="p in secciones.configuracion"
-                      :key="p.menu"
-                      v-bind="p"
+                    <PermisoRow v-for="p in secciones.dashboard" :key="p.menu" v-bind="p"
                       :modelValue="permisosSeleccionados[p.menu] || {}"
-                      @update:modelValue="val => permisosSeleccionados[p.menu] = val"
-                    />
+                      @update:modelValue="val => permisosSeleccionados[p.menu] = val" />
 
-                    <tr><td class="font-weight-bold color-rol" colspan="5"><strong>OPERACIÓN</strong></td></tr>
-                    <PermisoRow
-                      v-for="p in secciones.operacion"
-                      :key="p.menu"
-                      v-bind="p"
+                    <tr>
+                      <td class="font-weight-bold color-rol" colspan="5"><strong>CONFIGURACIÓN</strong></td>
+                    </tr>
+
+                    <PermisoRow v-for="p in secciones.configuracion" :key="p.menu" v-bind="p"
                       :modelValue="permisosSeleccionados[p.menu] || {}"
-                      @update:modelValue="val => permisosSeleccionados[p.menu] = val"
-                    />
+                      @update:modelValue="val => permisosSeleccionados[p.menu] = val" />
 
-                    <tr><td class="font-weight-bold color-rol" colspan="5"><strong>REPORTES</strong></td></tr>
-
-                    <PermisoRow
-                      v-for="p in secciones.reportes"
-                      :key="p.menu"
-                      v-bind="p"
+                    <tr>
+                      <td class="font-weight-bold color-rol" colspan="5"><strong>OPERACIÓN</strong></td>
+                    </tr>
+                    <PermisoRow v-for="p in secciones.operacion" :key="p.menu" v-bind="p"
                       :modelValue="permisosSeleccionados[p.menu] || {}"
-                      @update:modelValue="val => permisosSeleccionados[p.menu] = val"
-                    />
+                      @update:modelValue="val => permisosSeleccionados[p.menu] = val" />
+
+                    <tr>
+                      <td class="font-weight-bold color-rol" colspan="5"><strong>REPORTES</strong></td>
+                    </tr>
+
+                    <PermisoRow v-for="p in secciones.reportes" :key="p.menu" v-bind="p"
+                      :modelValue="permisosSeleccionados[p.menu] || {}"
+                      @update:modelValue="val => permisosSeleccionados[p.menu] = val" />
                   </tbody>
                 </table>
               </div>

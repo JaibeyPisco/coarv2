@@ -1,60 +1,14 @@
-
-
 <script setup>
-  import { ref} from "vue";
-  import Breadcumbs from "@/components/Breadcumbs.vue";
-  
- 
-import ModalSave from "./ModalSave.vue";
-import { UseRol } from "@/composables/settings/rol/UseRol";
-
-  const {  getRoles, users, response } = UseRol()
-  
-  getRoles()
- 
- const buttons = [
-     {label: 'Nuevo', class:"btn-primary", action:'new'}
- ]
-  const modalRef = ref(null);
-  
-  const handleClick = () => {
-      modalRef.value?.openModal();
-  }
-
-  const editarUsuario = (usuario) => {
-    modalRef.value?.openModal(usuario);
-  }
-
-  const handleSaved = () =>{
-    getRoles()
-
-  
-    
-  }
+    defineProps({
+        items:{
+            type: Array,
+            required:true,
+        }
+    })
 
 </script>
-
 <template>
-
-  <div v-if="loading">
-      LOADING .....
-  </div>
-
-  <ModalSave ref="modalRef"
-    @saved="handleSaved"
-  />
-  <Breadcumbs :buttons="buttons" :module="['Configuración', 'Rol y permisos']"  @button-click="handleClick"></Breadcumbs>
-
- 
-
-  <!--end::App Content Header-->
-  <!--begin::App Content-->
-  <div class="app-content">
-
-    <!--begin::Container-->
-    <div class="container-fluid">
-      <!--begin::Row-->
-      <!-- Default box -->
+     <!-- Default box -->
       <div class="card" style="max-height: 80vh; overflow-y: auto;">
         <div class="card-body">
 
@@ -109,13 +63,6 @@ import { UseRol } from "@/composables/settings/rol/UseRol";
       </div>
       <!-- /.card -->
       <!--begin::Row-->
-
-    </div>
-    <!--end::Container-->
-  </div>
-
 </template>
-
-<style scoped>
-
+<style>
 </style>

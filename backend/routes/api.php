@@ -38,7 +38,7 @@ Route::controller(UserController::class)->group(function(){
 
 Route::controller(RoleController::class)->group(function(){
 
-    Route::get('settings/role', 'index')->name('users');
+    Route::get('settings/role', 'index')->name('role');
     Route::post('settings/role/save', 'save')->name('register');
     // Route::post('settings/user/edit', 'edit')->name('edit');
     // Route::post('/settings/user/changeStatus/{id_user}', 'changeStatus')->name('changeStatus');

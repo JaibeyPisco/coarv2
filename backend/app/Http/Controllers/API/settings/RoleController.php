@@ -11,6 +11,17 @@ use mysql_xdevapi\Exception;
 
 class RoleController extends BaseController
 {
+    public  function index(){
+
+        $response = Role::all();
+ foreach ($response as $rol) {
+        $rol->role_details = Role_permission::where('id_role', $rol->id)->get();
+        
+    }
+
+        return response()->json($response);
+
+    }
     public function save(Request $request)
     {
         $request->validate([
