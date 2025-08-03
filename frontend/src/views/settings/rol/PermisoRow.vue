@@ -3,17 +3,24 @@ const props = defineProps({
   menu: String,
   title: String,
   items: Array,
-  modelValue: Object
+  modelValue: Object,
 })
 const emit = defineEmits(['update:modelValue'])
 
 const tipos = ['view', 'new', 'edit', 'delete']
 
 function toggle(tipo, checked) {
-  emit('update:modelValue', {
+  // Crear nuevo objeto desde cero para asegurar reactividad
+  const nuevoValor = {
+    view: false,
+    new: false,
+    edit: false,
+    delete: false,
     ...props.modelValue,
-    [tipo]: checked
-  })
+    [tipo]: checked,
+  }
+
+  emit('update:modelValue', nuevoValor)
 }
 </script>
 

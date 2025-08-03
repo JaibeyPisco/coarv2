@@ -4,14 +4,15 @@ import { showMessageNotification } from "@/lib/utils/Notification";
 
 import { ref } from "vue";
 
-export const UseRol = () => {
+export const UseUser = () => {
+
     const loading = ref(false);
     const response = ref([]);
 
-    const getRoles = async () => {
+    const getUsers = async () => {
         try {
             loading.value = true;
-            const { data } = await axiosInstance.get('settings/roles');
+            const { data } = await axiosInstance.get('settings/users');
             console.log('Respuesta completa del backend:', data);
             
             // El backend devuelve { success: true, data: [...], message: "" }
@@ -21,7 +22,7 @@ export const UseRol = () => {
                 response.value = data; // Fallback
             }
             
-            console.log('Roles cargados:', response.value);
+            console.log('Usuarios cargados:', response.value);
         } catch (error) {
             console.error(error);
             const messages = error.response?.data?.data || ['Ocurrió un error inesperado'];
@@ -34,8 +35,8 @@ export const UseRol = () => {
     const deleteRole = async (roleId) => {
         try {
             loading.value = true;
-            await axiosInstance.delete(`settings/role/${roleId}`);
-            showMessageNotification('Rol eliminado correctamente', 'success');
+            await axiosInstance.delete(`settings/user/${roleId}`);
+            showMessageNotification('Usuario eliminado correctamente', 'success');
             await getRoles(); // Recargar la lista
             return true;
         } catch (error) {
@@ -68,7 +69,7 @@ export const UseRol = () => {
     };
 
     return {
-        getRoles,
+        getUsers,
         deleteRole,
         refreshRoles,
         response,

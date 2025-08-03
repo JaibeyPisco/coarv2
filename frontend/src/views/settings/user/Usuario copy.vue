@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import axiosInstance from '@/lib/utils/axiosInstance.js'
 import ModalSave from '@/views/settings/user/ModalSave.vue'
 import { showMessageNotification } from '@/lib/utils/Notification'
@@ -12,7 +12,7 @@ const users = ref([])
 const modalRef = ref(null)
 const usuarioSeleccionado = ref(null)
 const modoModal = ref('nuevo')
-const tablaRef = ref(null)
+const filtroTexto = ref('')
 let tablaInstance = null
 
 const cargarUsuarios = async () => {
@@ -27,31 +27,28 @@ const cargarUsuarios = async () => {
   }
 }
 
-const filtroTexto = ref('')
-
 const filtrarTabla = () => {
   tablaInstance.setFilter([
-    [
-      { field: 'name', type: 'like', value: filtroTexto.value },
-      { field: 'surname', type: 'like', value: filtroTexto.value },
-      { field: 'email', type: 'like', value: filtroTexto.value },
-    ]
+    { field: 'name', type: 'like', value: filtroTexto.value },
+    { field: 'surname', type: 'like', value: filtroTexto.value },
+    { field: 'email', type: 'like', value: filtroTexto.value },
   ])
 }
 
-
-const renderizarTabla = () => {
+const renderizarTabla = async() => {
+   await nextTick(() => {
   if (tablaInstance) {
     tablaInstance.setData(users.value)
     return
   }
 
-  tablaInstance = new Tabulator(tablaRef.value, {
-  
+  tablaInstance = new Tabulator("#tablaRef", {
     data: users.value,
     layout: 'fitColumns',
+    pagination: true,  // Habilita la paginación
+    paginationSize: 5, // Muestra 5 registros por página
     columns: [
-      { title: 'ID', field: 'id', visible: false},
+      { title: 'ID', field: 'id', visible: false },
       { title: 'NOMBRES', field: 'name' },
       { title: 'APELLIDOS', field: 'surname' },
       { title: 'EMAIL', field: 'email' },
@@ -69,66 +66,37 @@ const renderizarTabla = () => {
       {
         title: 'ACCIONES',
         formatter: () => /*html*/`
-
-           <div class="btn-group">
-                        <button 
-                          type="button" 
-                          class="btn btn-outline-primary btn-sm" 
-                          name="editar"
-                          title="Editar rol"
-                        >
-                          <i class="bi bi-pencil"></i> Editar
-                        </button>
-                        <button 
-                          type="button" 
-                          class="btn btn-outline-danger btn-sm dropdown-toggle dropdown-toggle-split" 
-                          data-bs-toggle="dropdown" 
-                          aria-expanded="false"
-                        >
-                          <span class="visually-hidden">Toggle Dropdown</span>
-                        </button>
-                        <ul class="dropdown-menu">
-                          <li>
-                            <a class="dropdown-item text-danger" href="#" name="eliminar">
-                              <i class="bi bi-trash me-2"></i>Eliminar
-                            </a>
-                          </li>
-                          <li><hr class="dropdown-divider"></li>
-                          <li>
-                            <a class="dropdown-item" href="#">
-                              <i class="bi bi-eye me-2"></i>Ver permisos
-                            </a>
-                          </li>
-                        </ul>
-                      </div>
-
+          <div class="btn-group">
+            <button type="button" class="btn btn-outline-primary btn-sm" name="editar" title="Editar rol">
+              <i class="bi bi-pencil"></i> Editar
+            </button>
+            <button type="button" class="btn btn-outline-danger btn-sm dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+              <span class="visually-hidden">Toggle Dropdown</span>
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item text-danger" href="#" name="eliminar"><i class="bi bi-trash me-2"></i>Eliminar</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#"><i class="bi bi-eye me-2"></i>Ver permisos</a></li>
+            </ul>
+          </div>
         `,
         cellClick: (e, cell) => {
-
           const row = cell.getRow().getData()
-
           const btnEditar = e.target.closest('button[name="editar"]');
-          const btnEliminar = e.target.closest('button[name="eliminar"]');
+          const btnEliminar = e.target.closest('a[name="eliminar"]');
 
-          if(btnEditar){
-             editarUsuario(row)
+          if (btnEditar) {
+            editarUsuario(row)
           }
-          if(btnEliminar){
-             eliminarUsuario(row)
+          if (btnEliminar) {
+            eliminarUsuario(row)
           }
-
-       
         }
       }
     ],
-
-    rowFormatter:function(row){
-
-        // if(row.getData().age >= 18){
-        //     row.getElement().classList.add("table-primary"); //mark rows with age greater than or equal to 18 as successful;
-        // }
-    },
   })
+   })
+
 }
 
 onMounted(async () => {
@@ -166,21 +134,15 @@ const onUsuarioGuardado = async () => {
   await cargarUsuarios()
   tablaInstance.setData(users.value)
 }
-const buttons = [
-  { label: 'Nuevo', class: "btn-primary", action: 'new' }
-];
 
 const exportarExcel = () => {
   tablaInstance.download("xlsx", "usuarios.xlsx", { sheetName: "Usuarios" })
 }
-
 </script>
 
 <template>
-
-
     <Breadcumbs
-      :buttons="buttons"
+      :buttons="[{ label: 'Nuevo', class: 'btn-primary', action: 'new' }]"
       :module="['Configuración', 'Rol y permisos']"
       @button-click="handleClick"
     />
@@ -189,28 +151,49 @@ const exportarExcel = () => {
         <div class="row">
           <div class="col-lg-12">
             <div class="card" style="max-height: 80vh; overflow-y: auto;">
-            
               <div class="card-body">
-                
-                <div class="mb-3 d-flex justify-content-between align-items-center">
-                  
-                  <button class="btn btn-success btn-sm ms-2" @click="exportarExcel">
-                    <i class="bi bi-file-earmark-excel"></i> Exportar Excel
-                  </button>
-
-                  <div class="ms-auto">
-                       <input
-                    v-model="filtroTexto"
-                    @input="filtrarTabla"
-                    type="text"
-                    class="form-control "
-                    placeholder="Buscar por nombre, apellido o email..."
-                  />
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <div class="d-flex align-items-center">
+                      <button class="btn btn-success btn-sm ms-2" @click="exportarExcel">
+                        <i class="bi bi-file-earmark-excel"></i> Exportar Excel
+                      </button>
+                      <button class="btn btn-outline-secondary btn-sm ms-2" type="button">
+                        <i class="bi bi-printer"></i> Imprimir
+                      </button>
+                      <button class="btn btn-outline-secondary btn-sm ms-2" type="button">
+                        <i class="bi bi-columns"></i> Mostrar Columnas
+                      </button>
+                    </div>
                   </div>
-
+                  <div class="col-md-6">
+                    <div id="DataTables_Table_0_filter" class="dataTables_filter d-flex justify-content-end">
+                      <label class="d-flex align-items-center">
+                        <i class="bi bi-search me-2"></i>
+                        <input
+                          v-model="filtroTexto"
+                          @input="filtrarTabla"
+                          class="form-control form-control-sm"
+                          placeholder="Buscar por nombre, apellido o email..."
+                        />
+                      </label>
+                    </div>
+                  </div>
                 </div>
 
+                <!-- Tabla de Tabulator -->
                 <div ref="tablaRef" class="tabulator-table"></div>
+              </div>
+
+              <div class="card-footer sticky-footer">
+                <div class="d-flex justify-content-between">
+                  <div class="dataTables_info" role="status" aria-live="polite">
+                    Mostrando 1 a 3 de 3 registros
+                  </div>
+                  <div>
+                    <!-- Puedes agregar más opciones aquí si deseas -->
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -218,30 +201,11 @@ const exportarExcel = () => {
       </div>
     </div>
 
-    <ModalSave
-      ref="modalRef"
-      :usuario="usuarioSeleccionado"
-      :modo="modoModal"
-      @saved="onUsuarioGuardado"
-    />
-
+    <!-- Modal de Guardado -->
+    <ModalSave ref="modalRef" :usuario="usuarioSeleccionado" :modo="modoModal" @saved="onUsuarioGuardado" />
 </template>
 
 <style scoped>
-.content-wrapper {
-  padding: 20px;
-}
-
-.badge {
-  font-size: 0.75rem;
-}
-
-.tabulator-table {
-  max-width: 100%;
-}
-
-
- 
 /* Mejora de la organización visual de los botones y el filtro */
 .card-body {
   padding: 20px;

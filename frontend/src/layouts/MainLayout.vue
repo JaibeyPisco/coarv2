@@ -5,6 +5,9 @@ import Header from "@/layouts/Header.vue";
 import Sidebar from "@/layouts/Sidebar.vue";
 import Footer from "@/layouts/Footer.vue";
 import { useAuthStore } from "@/lib/authentication/auth.js";
+import 'tabulator-tables/dist/css/tabulator.min.css'
+import 'tabulator-tables/dist/css/tabulator_materialize.min.css'
+import 'https://oss.sheetjs.com/sheetjs/xlsx.full.min.js'
 
 
 
@@ -17,7 +20,8 @@ onMounted(() => {
 
   LoaderStatic.requireFiles([
     '/css/adminlte.css',
-     '/js/adminlte.min.js'
+     '/js/adminlte.min.js',
+      '/css/app.css',
   ],async function () 
   {
 

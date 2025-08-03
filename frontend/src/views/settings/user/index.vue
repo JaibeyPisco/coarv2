@@ -4,13 +4,13 @@
 import { ref, computed } from "vue";
 import Breadcumbs from "@/components/Breadcumbs.vue";
 import ModalSave from "./ModalSave.vue";
-import { UseRol } from "@/composables/settings/rol/UseRol";
+import { UseUser } from "@/composables/settings/user/UseUser";
 import { showMessageNotification } from '@/lib/utils/Notification';
 import { onMounted, onUnmounted } from "vue";
 
-const { getRoles, deleteRole, refreshRoles, response, loading } = UseRol();
+const { getUsers, deleteRole, refreshRoles, response, loading } = UseUser();
 
-getRoles();
+getUsers();
 
 const buttons = [
   { label: 'Nuevo', class: "btn-primary", action: 'new' }
@@ -166,9 +166,11 @@ const handleSaved = (rolGuardado) => {
                 <thead class="table-dark">
                   <tr>
                     <th width="200">ACCIONES</th>
-                    <th>NOMBRE DEL ROL</th>
-                    <th>ESTADO DASHBOARD</th>
-                   
+                    <th>NOMBRE</th>
+                    <th>APELLIDOS</th>
+                    <th>EMAIL</th>
+                    <th>TIPO DE USUARIO</th>
+
                   </tr>
                 </thead>
                 <tbody>
@@ -207,28 +209,23 @@ const handleSaved = (rolGuardado) => {
                         </ul>
                       </div>
                     </td>
-
+                    
+      
                     <td>
                       <strong>{{ role.name }}</strong>
-                       
                     </td>
-
                     <td>
-                      <span 
-                        v-if="role.fl_no_view_dashboard == 0" 
-                        class="badge bg-success"
-                      >
-                        <i class="bi bi-check-circle me-1"></i>Con Dashboard
-                      </span>
-                      <span 
-                        v-else 
-                        class="badge bg-warning"
-                      >
-                        <i class="bi bi-x-circle me-1"></i>Sin Dashboard
-                      </span>
+                      <strong>{{ role.surname }}</strong>
                     </td>
-
-                     
+                    <td>
+                      <strong>{{ role.email }}</strong>
+                    </td>
+                
+                    <td>
+                      <strong>{{ role.user_type }}</strong>
+                    </td>
+                   
+ 
                   </tr>
                   
                   <!-- Mensaje cuando no hay resultados -->

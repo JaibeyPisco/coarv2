@@ -17,7 +17,7 @@
           {
             path: '/configuracion/usuario',
             name: 'usuario',
-            component: () => import('../views/settings/user/Usuario.vue'),
+            component: () => import('../views/settings/user/index.vue'),
             meta: { requiresAuth: true }
           },
           {
