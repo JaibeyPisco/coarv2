@@ -1,15 +1,11 @@
 <?php
 
 namespace App\Http\Controllers\API\settings;
-
-
-use App\Models\Company;
-use App\Models\Role;
+ 
 use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as BaseController;
+use App\Models\Settings\Company;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
-
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 
@@ -70,7 +66,8 @@ class CompanyController extends BaseController
             'phone' => 'string|min:1|nullable',
             'email' => 'string|min:1|nullable',
             'phone' => 'string|min:1|nullable',
-            'id_ubigeo' => 'integer|min:1|nullable',
+            // 'id_ubigeo' => 'integer|min:1|nullable',
+
         ]);
 
         if ($validator->fails()) {
@@ -85,7 +82,7 @@ class CompanyController extends BaseController
         $company->address          = $request->address;
         $company->phone            = $request->phone;
         $company->email            = $request->email;
-        $company->id_ubigeo        = $request->id_ubigeo;
+        // $company->id_ubigeo        = $request->id_ubigeo;
 
         $company->save();
 

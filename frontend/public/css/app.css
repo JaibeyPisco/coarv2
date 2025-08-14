@@ -1,5 +1,5 @@
 .card {
-  height: 800px; /* Ajusta a un tamaño fijo */
+  min-height: 800px; /* Ajusta a un tamaño fijo */
 }
 
 .card-body {
@@ -12,3 +12,33 @@
   overflow: auto; /* Habilita el scroll interno */
 }
  
+
+.modal-body {
+    flex-grow: 1; /* Permite que el cuerpo crezca */
+    overflow-y: auto; /* Agrega scroll si hay mucho contenido */
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+.modal-header {
+	/* padding: .5rem 1rem; */
+	/* margin-bottom: 0; */
+	/* color: var(--cui-card-cap-color); */
+	background-color: rgba(37, 43, 54, 0.03) !important;
+	/* border-bottom: var(--cui-card-border-width) solid var(--cui-card-border-color); */
+  }
+
+  /* Reducir el padding del header */
+.modal-header, .modal-footer {
+	padding: 6px 12px !important; /* Reduce espacio en el header */
+	font-size: 14px; /* Ajusta el tamaño del texto */
+  }
+
+    .modal-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Asegura que el modal ocupe toda la pantalla */
+}

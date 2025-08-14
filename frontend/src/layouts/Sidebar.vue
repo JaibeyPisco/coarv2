@@ -44,7 +44,10 @@ import MenuItem from '@/components/utils/MenuItem.vue';
             </a>
             <ul class="nav nav-treeview">
                   <MenuItem  to="/configuracion/usuario" icon="bi bi-cicle" label="Usuario" />
+                  <MenuItem to="/configuracion/empresa" icon="bi bi-cicle" label="Empresa" />
                   <MenuItem to="/configuracion/rol_permiso" icon="bi bi-cicle" label="Roles y permisos" />
+                  <MenuItem to="/configuracion/lugares" icon="bi bi-cicle" label="Lugares" />
+                  <MenuItem to="/configuracion/tipos_incidencia" icon="bi bi-cicle" label="Tipos de incidencias" />
             </ul>
           </li>
           <li class="nav-item">
