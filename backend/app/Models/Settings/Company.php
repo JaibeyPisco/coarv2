@@ -5,8 +5,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Company extends Model
 {
-    //
-
     protected $table = 'empresa';
     
     protected $fillable = [
@@ -18,6 +16,11 @@ class Company extends Model
         'phone',
         'email',
         'id_ubigeo',
+        'logo',
+        'logo_factura',
     ];
 
+    protected $casts = [
+        'id_ubigeo' => 'integer',
+    ];
 }

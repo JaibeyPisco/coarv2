@@ -1,5 +1,5 @@
 <script setup>
-import { nextTick, onMounted } from "vue";
+import { onMounted } from "vue";
 import LoaderStatic from "@/lib/utils/LoaderStatic.js";
 import Header from "@/layouts/Header.vue";
 import Sidebar from "@/layouts/Sidebar.vue";
@@ -11,9 +11,7 @@ import 'tabulator-tables/dist/css/tabulator.min.css'
 import 'tabulator-tables/dist/css/tabulator_materialize.min.css'
 import 'https://oss.sheetjs.com/sheetjs/xlsx.full.min.js'
 
-
-
-
+  
 const authStore = useAuthStore();
 
 onMounted(() => {

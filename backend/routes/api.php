@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\AppController;
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\settings\CompanyController;
 use App\Http\Controllers\API\settings\IncidenceTypesController;
 use App\Http\Controllers\API\settings\PlaceController;
 use App\Http\Controllers\API\settings\RoleController;
@@ -28,6 +29,8 @@ Route::post('logout', [AuthController::class, 'logout'])
   ->middleware('auth:sanctum')
   ->name('logout');
 
+
+
 Route::controller(UserController::class)->group(function(){
 
     Route::get('settings/users', 'index')->name('users');
@@ -37,6 +40,17 @@ Route::controller(UserController::class)->group(function(){
     Route::post ('settings/user/uniqueUser/{id_user}', 'uniqueUser')->name('uniqueUser');
 
 })->middleware('auth:sanctum');
+
+Route::controller(CompanyController::class)->group(function(){
+
+    Route::get('settings/company', 'index')->name('places');
+    Route::post('settings/company/save', 'save')->name('save');
+    // Route::post('settings/user/edit', 'edit')->name('edit');
+    // Route::post('/settings/user/changeStatus/{id_user}', 'changeStatus')->name('changeStatus');
+    // Route::post ('settings/user/uniqueUser/{id_user}', 'uniqueUser')->name('uniqueUser');
+
+})->middleware('auth:sanctum');
+
 
 Route::controller(PlaceController::class)->group(function(){
 

@@ -5,116 +5,137 @@ namespace App\Http\Controllers\API\settings;
 use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\Settings\Company;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class CompanyController extends BaseController
 {
+    /**
+     * Obtener datos de la empresa
+     */
+    public function index(): JsonResponse 
+    {
+        try {
+            $company = Company::first();
+            
+            if (!$company) {
+                return $this->sendResponse([
+                    'id' => null,
+                    'document_number' => '',
+                    'business_name' => '',
+                    'trade_name' => '',
+                    'address' => '',
+                    'phone' => '',
+                    'email' => '',
+                    'logo' => '',
+                    'logo_factura' => ''
+                ], 'No hay datos de empresa configurados.');
+            }
 
-    public function index() : JsonResponse {
+            // Retornar directamente los datos del modelo
+            $data = [
+                'id' => $company->id,
+                'document_number' => $company->document_number,
+                'business_name' => $company->business_name,
+                'trade_name' => $company->trade_name,
+                'address' => $company->address,
+                'phone' => $company->phone,
+                'email' => $company->email,
+                'logo' => $company->logo ?? '',
+                'logo_factura' => $company->logo_factura ?? ''
+            ];
 
-        $users = User::all();
-        return $this->sendResponse($users);
+            return $this->sendResponse($data, 'Datos de empresa obtenidos correctamente.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error al obtener datos de empresa.', $e->getMessage());
+        }
     }
-
 
     /**
-     * Register api
-     *
-     * @return \Illuminate\Http\Response
+     * Guardar empresa (crear o actualizar)
+     * Usa una sola función para ambos casos según las instrucciones
      */
-    public function create(Request $request): JsonResponse
+    public function save(Request $request): JsonResponse
     {
+        try {
+            $validator = Validator::make($request->all(), [
+                'document_number' => 'required|string|max:255',
+                'business_name' => 'required|string|max:255',
+                'trade_name' => 'required|string|max:255',
+                'address' => 'required|string|max:500',
+                'phone' => 'required|string|max:20',
+                'email' => 'required|email|max:255',
+            ]);
 
-    // PermissionHelper::authorize('user.create', 'Usuario');
+            if ($validator->fails()) {
+                return $this->sendError('Error de validación.', $validator->errors());
+            }
 
-        $validator = Validator::make($request->all(), [
-            'business_name' => 'required|string|max:255',
-            'trade_name' => 'required|email',
-            'document_number' => 'required|string',
-            'address' => 'required|string',
-            'phone' => 'string|min:1|nullable',
-            'email' => 'string|min:1|nullable',
-            'phone' => 'string|min:1|nullable',
-            'id_ubigeo' => 'integer|min:1|nullable',
-        ]);
+            $input = $request->all();
+            
+            // Manejar imágenes usando Storage de Laravel
+            if ($request->hasFile('imagen')) {
+                $logo = $request->file('imagen')->store('images', 'public');
+                $urlLogo = Storage::url($logo);
+                $input['logo'] = $urlLogo;
+            }
+            
+            if ($request->hasFile('imagen_factura')) {
+                $docLogo = $request->file('imagen_factura')->store('images', 'public');
+                $urlDocLogo = Storage::url($docLogo);
+                $input['logo_factura'] = $urlDocLogo;
+            }
 
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());
+            // Usar directamente los nombres del modelo
+            $companyData = [
+                'document_number' => $input['document_number'],
+                'business_name' => $input['business_name'],
+                'trade_name' => $input['trade_name'],
+                'address' => $input['address'],
+                'phone' => $input['phone'],
+                'email' => $input['email'],
+            ];
+
+            // Agregar logos si existen
+            if (isset($input['logo'])) {
+                $companyData['logo'] = $input['logo'];
+            }
+            
+            if (isset($input['logo_factura'])) {
+                $companyData['logo_factura'] = $input['logo_factura'];
+            }
+
+            // Buscar si ya existe una empresa
+            $company = Company::first();
+            
+            if ($company) {
+                // Actualizar empresa existente
+                $company->update($companyData);
+                $message = 'Empresa actualizada correctamente.';
+            } else {
+                // Crear nueva empresa
+                $company = Company::create($companyData);
+                $message = 'Empresa creada correctamente.';
+            }
+
+            // Retornar directamente los datos del modelo actualizado
+            // $responseData = [
+            //     'id' => $company->id,
+            //     'document_number' => $company->document_number,
+            //     'business_name' => $company->business_name,
+            //     'trade_name' => $company->trade_name,
+            //     'address' => $company->address,
+            //     'phone' => $company->phone,
+            //     'email' => $company->email,
+            //     'logo' => $company->logo ?? '',
+            //     'logo_factura' => $company->logo_factura ?? ''
+            // ];
+
+            return $this->sendResponse([], $message);
+            
+        } catch (\Exception $e) {
+            return $this->sendError('Error al guardar empresa.', $e->getMessage());
         }
-
-        $input = $request->all();
-
-       // $input['status'] = 'ACTIVO';
-
-        $input['password'] = bcrypt($input['password']);
-
-        $company = Company::create($input);
-
-        return $this->sendResponse($company, 'User register successfully.');
     }
-
-    public function edit(Request $request): JsonResponse
-    {
-        $validator = Validator::make($request->all(), [
-            'id'       => 'required|exists:empresa,id',
-            'business_name' => 'required|string|max:255',
-            'trade_name' => 'required|email',
-            'document_number' => 'required|string',
-            'address' => 'required|string',
-            'phone' => 'string|min:1|nullable',
-            'email' => 'string|min:1|nullable',
-            'phone' => 'string|min:1|nullable',
-            // 'id_ubigeo' => 'integer|min:1|nullable',
-
-        ]);
-
-        if ($validator->fails()) {
-            return $this->sendError('Error  de validaciones.', $validator->errors());
-        }
-
-        $company = Company::find($request->id);
-
-        $company->business_name    = $request->business_name;
-        $company->trade_name       = $request->trade_name;
-        $company->document_number  = $request->document_number;
-        $company->address          = $request->address;
-        $company->phone            = $request->phone;
-        $company->email            = $request->email;
-        // $company->id_ubigeo        = $request->id_ubigeo;
-
-        $company->save();
-
-
-        return $this->sendResponse($company, 'Empresa actualizado corrctamente.');
-    }
-
-
-
-  /*  public function uniqueUser(int $id_user) : JsonResponse {
-        $user = User::find($id_user);
-        return  $this->sendResponse($user);
-    }
-*/
-
- /*   public function changeStatus(int $id_user): JsonResponse
-    {
-
-        $user = User::find($id_user);
-
-        $user->status = $user->status === 'ACTIVO' ? 'INACTIVO' : 'ACTIVO';
-
-        $user->save();
-
-       return $this->sendResponse($user, 'Guardado correctamente.');
-    }
-
-*/
-
-
 }
-
-
-
-

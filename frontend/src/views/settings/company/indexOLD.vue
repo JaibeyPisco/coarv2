@@ -8,7 +8,7 @@ import { showMessageNotification } from '@/lib/utils/Notification';
 
 const { save, getCompany, loading } = UseCompany();
 
-// Estado del formulario - usando nombres del modelo Company
+// Estado del formulario - usando nombres en inglés como el backend
 const formData = ref({
   id: null,
   document_number: '',
@@ -46,31 +46,34 @@ onMounted(async () => {
   }
 });
 
-  // Función para cargar los datos de la empresa
-  const loadCompanyData = async () => {
-    try {
-      const response = await getCompany();
-      const companyData = response.data;
-      console.log({companyData});
+// Función para cargar los datos de la empresa
+const loadCompanyData = async () => {
+  try {
+    const data = await getCompany();
     
-      formData.value = {
-        id: companyData?.id || null,
-        document_number: companyData?.document_number || '',
-        business_name: companyData?.business_name || '',
-        trade_name: companyData?.trade_name || '',
-        address: companyData?.address || '',
-        phone: companyData?.phone || '',
-        email: companyData?.email || '',
-        logo: URL_BACKEND_IMAGES + companyData?.logo || '',
-        logo_factura: URL_BACKEND_IMAGES + companyData?.logo_factura || ''
-      };
+    // Mapear los datos del backend al formulario (nombres en inglés)
+    formData.value = {
+      id: data.id || null,
+      document_number: data.numero_documento || '',
+      business_name: data.razon_social || '',
+      trade_name: data.nombre_comercial || '',
+      address: data.direccion || '',
+      phone: data.telefono || '',
+      email: data.email || '',
+      logo: data.logo || '',
+      logo_factura: data.logo_factura || ''
+    };
 
-  
-    } catch (error) {
-      console.error('Error al cargar datos:', error);
-      showMessageNotification('Error al cargar datos de la empresa', 'error');
-    }
-  };
+    // Guardar las imágenes anteriores para comparación
+    previousImages.value = {
+      logo: data.logo || '',
+      logo_factura: data.logo_factura || ''
+    };
+  } catch (error) {
+    console.error('Error al cargar datos:', error);
+    showMessageNotification('Error al cargar datos de la empresa', 'error');
+  }
+};
 
 // Validación del formulario
 const validateForm = () => {
@@ -108,12 +111,12 @@ const handleSubmit = async () => {
   try {
     const data = new FormData();
 
-    // Agregar los campos del formulario al FormData (nombres del modelo)
-    data.append('document_number', formData.value.document_number);
-    data.append('business_name', formData.value.business_name);
-    data.append('trade_name', formData.value.trade_name);
-    data.append('address', formData.value.address);
-    data.append('phone', formData.value.phone);
+    // Agregar los campos del formulario al FormData (nombres en español como espera el backend)
+    data.append('numero_documento', formData.value.document_number);
+    data.append('razon_social', formData.value.business_name);
+    data.append('nombre_comercial', formData.value.trade_name);
+    data.append('direccion', formData.value.address);
+    data.append('telefono', formData.value.phone);
     data.append('email', formData.value.email);
 
     // Agregar las imágenes solo si han cambiado
@@ -126,10 +129,51 @@ const handleSubmit = async () => {
 
     const result = await save(data);
     
+    // Debug: ver qué retorna el backend
+    console.log('Respuesta del backend:', result);
+    console.log('Estructura de result:', {
+      hasData: !!result.data,
+      dataKeys: result.data ? Object.keys(result.data) : 'No data',
+      message: result.message,
+      success: result.success
+    });
+    
     // Mostrar mensaje de éxito
     showMessageNotification(result.message || 'Empresa guardada exitosamente', 'success');
     
- 
+    // Limpiar las imágenes del formulario
+    formDataFotos.value = {
+      imagen: null,
+      imagen_factura: null,
+    };
+
+    // Actualizar el formulario con la respuesta del backend
+    if (result.data) {
+      console.log('Actualizando formulario con:', result.data);
+      formData.value = {
+        id: result.data.id || null,
+        document_number: result.data.numero_documento || '',
+        business_name: result.data.razon_social || '',
+        trade_name: result.data.nombre_comercial || '',
+        address: result.data.direccion || '',
+        phone: result.data.telefono || '',
+        email: result.data.email || '',
+        logo: result.data.logo || '',
+        logo_factura: result.data.logo_factura || ''
+      };
+
+      // Actualizar las imágenes anteriores
+      previousImages.value = {
+        logo: result.data.logo || '',
+        logo_factura: result.data.logo_factura || ''
+      };
+      
+      console.log('Formulario actualizado:', formData.value);
+    } else {
+      console.log('No hay data en la respuesta, recargando datos...');
+      // Si no hay data, recargar desde el backend
+      await loadCompanyData();
+    }
     
   } catch (error) {
     console.error('Error al guardar:', error);
@@ -146,7 +190,38 @@ const handleImageCompanyChange = (file) => {
 const handleImageDocumentChange = (file) => {
   formDataFotos.value.imagen_factura = file;
 };
- 
+
+// Computed para obtener la URL de la imagen de la empresa
+const companyLogoUrl = computed(() => {
+  if (formDataFotos.value.imagen) {
+    return URL.createObjectURL(formDataFotos.value.imagen);
+  }
+  if (formData.value.logo) {
+    // Si la URL ya incluye /storage, usarla directamente
+    if (formData.value.logo.startsWith('/storage/')) {
+      return formData.value.logo;
+    }
+    // Si no, construir la URL completa
+    return `${URL_BACKEND_IMAGES}${formData.value.logo}`;
+  }
+  return URL_PLACEHOLDER_IMAGE;
+});
+
+// Computed para obtener la URL de la imagen de documentos
+const documentLogoUrl = computed(() => {
+  if (formDataFotos.value.imagen_factura) {
+    return URL.createObjectURL(formDataFotos.value.imagen_factura);
+  }
+  if (formData.value.logo_factura) {
+    // Si la URL ya incluye /storage, usarla directamente
+    if (formData.value.logo_factura.startsWith('/storage/')) {
+      return formData.value.logo_factura;
+    }
+    // Si no, construir la URL completa
+    return `${URL_BACKEND_IMAGES}${formData.value.logo_factura}`;
+  }
+  return URL_PLACEHOLDER_IMAGE;
+});
 </script>
 
 <template>
@@ -174,7 +249,7 @@ const handleImageDocumentChange = (file) => {
                   <div class="row">
                     <div class="col-md-12 mb-3" align="center">
                       <ImagePreviewComponent 
-                        :image="formData.logo" 
+                        :image="companyLogoUrl" 
                         @change="handleImageCompanyChange" 
                         title="Examinar Logo"
                         name="companyLogo" 
@@ -183,7 +258,7 @@ const handleImageDocumentChange = (file) => {
 
                     <div class="col-md-12 mb-3" align="center">
                       <ImagePreviewComponent 
-                          :image="formData.logo_factura" 
+                        :image="documentLogoUrl" 
                         @change="handleImageDocumentChange"
                         title="Logo para documentos" 
                         name="documentLogo" 

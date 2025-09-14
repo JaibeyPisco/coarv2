@@ -1,6 +1,6 @@
 <script setup>
 import  { ref, watch } from "vue";
-import { URL_BACKEND_IMAGES, URL_PLACEHOLDER_IMAGE } from '@/lib/utils/config';
+import { URL_PLACEHOLDER_IMAGE } from '@/lib/utils/config';
 
 
 const emit = defineEmits(['change']);
